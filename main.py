@@ -141,13 +141,14 @@ end_date = dt.datetime.now().strftime("%d-%m-%Y")
 start_date = (dt.datetime.now() - dt.timedelta(days = 500)).strftime("%d-%m-%Y")
 output_df = pd.DataFrame()
 symbols_list = sorted(eq.get_symbols_list())
-
+st.title("EOD Equity Watchlist")
 while True:
     if dt.datetime.now().weekday() in range(5):
         if dt.datetime.now().strftime("%H:%M:%S") == "22:00:00":
+            st.write("processing data")
             for s in symbols_list:
                 try:
-                    print("running for symbol: {}, date: {}".format(s, end_date))
+                    st.write("processing data for symbol: {} for date: {}".format(s, end_date))
                     df = get_data(s, start_date, end_date)
                     df = main_function(df)
                     if df.iloc[-2]['divergence'] == "long":
@@ -165,7 +166,7 @@ while True:
                     else:
                         continue
                 except:
-                    print("error for symbol: {}, date: {}".format(s, end_date))
+                    st.write("error in processing data for symbol: {} for date: {}".format(s, end_date))
                     continue
             Email_sender(output_df, end_date)
         else:
