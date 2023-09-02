@@ -170,8 +170,10 @@ while True:
                     continue
             Email_sender(output_df, end_date)
         else:
+            st.write("weekday sleepy time")
             time.sleep(60)
             continue
     else:
+        st.write("weekend sleepy time")
         time.sleep(60)
         continue
