@@ -10,9 +10,10 @@ from email.mime.multipart import MIMEMultipart
 from smtplib import SMTP
 import smtplib
 import sys
+import streamlit as st
 
 def Email_sender(Output_msg, tickdate):
-    password_mail = "easiwykbdojoolxt"
+    password_mail = st.secrets["password"]
     if Output_msg.empty == False:
         msg = MIMEMultipart()
         msg['Subject'] = "EOD Equity Watchlist: {}".format(tickdate)
