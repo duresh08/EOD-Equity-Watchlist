@@ -141,27 +141,35 @@ start_date = (dt.datetime.now() - dt.timedelta(days = 500)).strftime("%d-%m-%Y")
 output_df = pd.DataFrame()
 symbols_list = sorted(eq.get_symbols_list())
 
-for s in symbols_list:
-    try:
-        print("running for symbol: {}, date: {}".format(s, end_date))
-        df = get_data(s, start_date, end_date)
-        df = main_function(df)
-        if df.iloc[-2]['divergence'] == "long":
-            if ((df.iloc[-1]['close'] > df.iloc[-1]['open']) & (df.iloc[-1]['close'] > df.iloc[-1]['200 EMA']) &
-               (df.iloc[-1]['%K'] > df.iloc[-2]['%K_low_shift']) & (df.iloc[-1]['%D'] > df.iloc[-2]['%D_low_shift']) &
-                (df.iloc[-1]['close'] < df.iloc[-1]['9 EMA'])):
-                output_df_dict = {"symbol": symbol, "tickdate": end_date}
-                output_df = pd.concat([output_df, pd.DataFrame.from_dict(output_df_dict).T]).reset_index(drop = True)
-        elif df.iloc[-2]['divergence'] == "short":
-            if ((df.iloc[-1]['close'] < df.iloc[-1]['open']) & (df.iloc[-1]['close'] < df.iloc[-1]['200 EMA']) &
-               (df.iloc[-1]['%K'] < df.iloc[-2]['%K_high_shift']) & (df.iloc[-1]['%D'] < df.iloc[-2]['%D_high_shift']) &
-                (df.iloc[-1]['close'] > df.iloc[-1]['9 EMA'])):
-                output_df_dict = {"symbol": symbol, "tickdate": end_date}
-                output_df = pd.concat([output_df, pd.DataFrame.from_dict(output_df_dict).T]).reset_index(drop = True)
+while True:
+    if dt.datetime.now().weekday() in range(5):
+        if dt.datetime.now().strftime("%H:%M:%S") == "22:00:00":
+            for s in symbols_list:
+                try:
+                    print("running for symbol: {}, date: {}".format(s, end_date))
+                    df = get_data(s, start_date, end_date)
+                    df = main_function(df)
+                    if df.iloc[-2]['divergence'] == "long":
+                        if ((df.iloc[-1]['close'] > df.iloc[-1]['open']) & (df.iloc[-1]['close'] > df.iloc[-1]['200 EMA']) &
+                           (df.iloc[-1]['%K'] > df.iloc[-2]['%K_low_shift']) & (df.iloc[-1]['%D'] > df.iloc[-2]['%D_low_shift']) &
+                            (df.iloc[-1]['close'] < df.iloc[-1]['9 EMA'])):
+                            output_df_dict = {"symbol": symbol, "tickdate": end_date}
+                            output_df = pd.concat([output_df, pd.DataFrame.from_dict(output_df_dict).T]).reset_index(drop = True)
+                    elif df.iloc[-2]['divergence'] == "short":
+                        if ((df.iloc[-1]['close'] < df.iloc[-1]['open']) & (df.iloc[-1]['close'] < df.iloc[-1]['200 EMA']) &
+                           (df.iloc[-1]['%K'] < df.iloc[-2]['%K_high_shift']) & (df.iloc[-1]['%D'] < df.iloc[-2]['%D_high_shift']) &
+                            (df.iloc[-1]['close'] > df.iloc[-1]['9 EMA'])):
+                            output_df_dict = {"symbol": symbol, "tickdate": end_date}
+                            output_df = pd.concat([output_df, pd.DataFrame.from_dict(output_df_dict).T]).reset_index(drop = True)
+                    else:
+                        continue
+                except:
+                    print("error for symbol: {}, date: {}".format(s, end_date))
+                    continue
+            Email_sender(output_df, end_date)
         else:
+            time.sleep(60)
             continue
-    except:
-        print("error for symbol: {}, date: {}".format(s, end_date))
+    else:
+        time.sleep(60)
         continue
-
-Email_sender(output_df, end_date)
