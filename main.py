@@ -144,7 +144,7 @@ symbols_list = sorted(eq.get_symbols_list())
 st.title("EOD Equity Watchlist")
 while True:
     if dt.datetime.now().weekday() in range(5):
-        if dt.datetime.now().strftime("%H:%M:%S") == "22:00:00":
+        if dt.datetime.now().strftime("%H:%M") == "22:00":
             st.write("processing data")
             for s in symbols_list:
                 try:
