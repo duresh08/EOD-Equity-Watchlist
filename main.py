@@ -15,28 +15,24 @@ import streamlit as st
 
 def Email_sender(Output_msg, tickdate):
     password_mail = st.secrets["password"]
-    if Output_msg.empty == False:
-        msg = MIMEMultipart()
-        msg['Subject'] = "EOD Equity Watchlist: {}".format(tickdate)
-        msg['From'] = 'dhruv.suresh2@gmail.com'
-        html = """\
-        <html>
-          <head></head>
-          <body>
-            {0}
-          </body>
-        </html>
-        """.format(Output_msg.to_html())
-        part1 = MIMEText(html, 'html')
-        msg.attach(part1)
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login('dhruv.suresh2@gmail.com', password_mail)
-        server.sendmail(msg['From'], 'dhruv.suresh2@gmail.com' , msg.as_string())
-        server.close()
-    else:
-        print("no mail to send for date {}".format(tickdate))
-        pass
+    msg = MIMEMultipart()
+    msg['Subject'] = "EOD Equity Watchlist: {}".format(tickdate)
+    msg['From'] = 'dhruv.suresh2@gmail.com'
+    html = """\
+    <html>
+      <head></head>
+      <body>
+        {0}
+      </body>
+    </html>
+    """.format(Output_msg.to_html())
+    part1 = MIMEText(html, 'html')
+    msg.attach(part1)
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login('dhruv.suresh2@gmail.com', password_mail)
+    server.sendmail(msg['From'], 'dhruv.suresh2@gmail.com' , msg.as_string())
+    server.close()
 
 def main_function(df):
     Stoch = round(ta.stoch(high = df["high"], low = df["low"], close = df["close"], window = 14, smooth_window = 3),2)
