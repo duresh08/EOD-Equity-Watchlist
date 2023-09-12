@@ -12,6 +12,7 @@ import time
 import smtplib
 import sys
 import streamlit as st
+import math
 
 def Email_sender(Output_msg, tickdate):
     password_mail = st.secrets["password"]
@@ -38,12 +39,7 @@ def main_function(df):
     Stoch = round(ta.stoch(high = df["high"], low = df["low"], close = df["close"], window = 14, smooth_window = 3),2)
     df["%K"] = Stoch["STOCHk_14_3_3"]
     df["%D"] = Stoch["STOCHd_14_3_3"]
-    if symbol[-3:] == "JPY":
-        rounding = 3
-    else:
-        rounding = 5
-    Heiken_Ashi = round(ta.ha(df["open"], high = df["high"], low = df["low"], close = df["close"]), rounding)
-    Bollinger_bands = round(ta.bbands(close = df["close"], length = 20, std = 2), rounding)
+    rounding = 2
     df['BBL'] = Bollinger_bands['BBL_20_2.0']
     df['BBU'] = Bollinger_bands['BBU_20_2.0']
     df["HA open"] = Heiken_Ashi["HA_open"]
